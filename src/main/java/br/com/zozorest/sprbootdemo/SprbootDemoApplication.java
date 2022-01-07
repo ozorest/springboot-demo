@@ -1,8 +1,11 @@
 package br.com.zozorest.sprbootdemo;
 
 import org.hibernate.annotations.Comment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class SprbootDemoApplication {
 
 	public static void main(String[] args) {
@@ -65,6 +69,48 @@ class RestApiDemoController {
 	@DeleteMapping("/{id}")
 	void deleteCoffee(@PathVariable String id) {
 		coffeeRepository.deleteById(id);
+	}
+}
+
+@RestController
+@RequestMapping("/greeting")
+class GreetingController {
+	@Value("${greeting-name: Padrão}")
+	private String name;
+
+	@Value("${greeting-coffee: ${greeting-name} is drinking Café 3 Corações}")
+	private String coffee;
+
+	@GetMapping
+	String getGreeting() {
+		return name;
+	}
+
+	@GetMapping("/coffee")
+	String getNameAndCoffee() {
+		return coffee;
+	}
+}
+
+@ConfigurationProperties(prefix = "greeting")
+class Greeting {
+	private String name;
+	private String coffee;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCoffee() {
+		return coffee;
+	}
+
+	public void setCoffee(String coffee) {
+		this.coffee = coffee;
 	}
 }
 
